@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
-class MySlideAnimation extends StatefulWidget {
-  const MySlideAnimation({super.key});
+class BouncingAnimation extends StatefulWidget {
+  const BouncingAnimation({super.key});
 
   @override
-  State<MySlideAnimation> createState() => _MySlideAnimationState();
+  State<BouncingAnimation> createState() => _BouncingAnimationState();
 }
 
-class _MySlideAnimationState extends State<MySlideAnimation>
+class _BouncingAnimationState extends State<BouncingAnimation>
     with SingleTickerProviderStateMixin {
   AnimationController? _animationController;
-  Animation<Offset>? _myAnimation;
+  Animation<double>? _myAnimation;
 
   @override
   void initState() {
@@ -21,12 +21,11 @@ class _MySlideAnimationState extends State<MySlideAnimation>
 
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 1),
     );
 
-    _myAnimation = Tween<Offset>(begin: Offset.zero, end: const Offset(2.0,2.0))
-        .animate(CurvedAnimation(
-            parent: _animationController!, curve: Curves.linear));
+    _myAnimation = Tween<double>(begin: 30, end: 300).animate(CurvedAnimation(
+        parent: _animationController!, curve: Curves.bounceOut));
 
     _animationController!.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -51,11 +50,22 @@ class _MySlideAnimationState extends State<MySlideAnimation>
         },
         child: const Icon(Icons.play_arrow),
       ),
-      body: Center(
-          child: SlideTransition(position: _myAnimation!,child: const Image(
-            width: 150,
-            height: 150,
-            image: AssetImage("assets/images/nemnig.jpg")),)),
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AnimatedBuilder(
+            animation: _myAnimation!,
+            builder: (context, child) => Container(
+              margin: EdgeInsets.only(top: _myAnimation!.value),
+              child: const Image(
+                width: 100,
+                height: 100,
+                image: AssetImage("assets/images/nemnig.jpg"),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
